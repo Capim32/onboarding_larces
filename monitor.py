@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta 
 from collections import defaultdict
 import re
 
@@ -21,7 +22,13 @@ def monitorar_log(path_log):
                         f"[ALERTA DE SEGURANÇA] Possível ataque de Força Bruta detectado"
                         f" do IP: {ip}"
                     )
+                    print(block_ip(ip))
                     break
+
+
+def block_ip(ip):
+    return f"IP {ip} bloqueado ebaaa"
+
 
 
 if __name__ == "__main__":
