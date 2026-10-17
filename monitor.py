@@ -3,8 +3,9 @@ from datetime import datetime, timedelta
 from collections import defaultdict
 import re
 
-TENTATIVAS_FALHAS = defaultdict(int)
-MAX_TENTATIVAS = 3
+TENTATIVAS_FALHAS = defaultdict(list)
+TIME_WINDOW = timedelta(minutes=5)
+MAX_TENTATIVAS = 5
 
 # regex para capturar o endereço IP de tentativas de login falhas
 padrao_log = re.compile(
@@ -42,14 +43,23 @@ def match(line):
     match = padrao_log.search(line)
     if match:
         ip = match.group(1)
-        TENTATIVAS_FALHAS[ip] += 1
-        if TENTATIVAS_FALHAS[ip] >= MAX_TENTATIVAS:
+        now = datetime.now()
+
+        TENTATIVAS_FALHAS[ip].append(now)
+
+        TENTATIVAS_FALHAS[ip] = [
+            time for  time in TENTATIVAS_FALHAS[ip] 
+            if now - time <= TIME_WINDOW
+        ]
+
+        tentativas = len(TENTATIVAS_FALHAS[ip])
+        if tentativas >= MAX_TENTATIVAS:
             print(
-                f"[ALERTA DE SEGURANÇA] Possível ataque de Força Bruta detectado"
-                f" do IP: {ip}"
+                f"\n[ALERTA DE SEGURANÇA] Possível ataque de Força Bruta detectado!"
+                f"\nIP: {ip} realizou {tentativas} ou mais tentativas em menos de {TIME_WINDOW.seconds // 60} minutos."
             )
             print(block_ip(ip))
-            TENTATIVAS_FALHAS[ip] = 0
+            TENTATIVAS_FALHAS[ip].clear()
 
 
 def block_ip(ip):
