@@ -3,6 +3,8 @@ from datetime import datetime, timedelta
 from collections import defaultdict
 import re
 
+TENTATIVAS_FALHAS = defaultdict(int)
+MAX_TENTATIVAS = 3
 
 # regex para capturar o endereço IP de tentativas de login falhas
 padrao_log = re.compile(
@@ -10,38 +12,44 @@ padrao_log = re.compile(
 )
 
 def monitorar_log(path_log):
-    with open (path_log, "r") as file:
-        for line in file:
-            if match(line):
-                break
-
+    try:
+        with open (path_log, "r") as file:
+            for line in file:
+                if match(line):
+                    break
+    except FileNotFoundError:
+        print(f"[Erro] O arquivo {path_log} não foi encontrado.")
+        exit(1)
+    
 def monitorar_log_tempo_real(path_log):
     print(f"monitorando {path_log} em tempo real...")
-    with open(path_log, "r") as file:
-        file.seek(0,2)
+    try:
+        with open(path_log, "r") as file:
+            file.seek(0,2)
 
-        while True:
-            line = file.readline()
-            if not line:
-                time.sleep(0.5)
-                continue
-            if match(line):
-                break
-
+            while True:
+                line = file.readline()
+                if not line:
+                    time.sleep(0.5)
+                    continue
+                if match(line):
+                    break
+    except FileNotFoundError:
+        print(f"[Erro] O arquivo {path_log} não foi encontrado.")
+        exit(1)
 
 def match(line):
     match = padrao_log.search(line)
     if match:
         ip = match.group(1)
-        tentativas_falhas[ip] += 1
-        if tentativas_falhas[ip] >= MAX_TENTATIVAS:
+        TENTATIVAS_FALHAS[ip] += 1
+        if TENTATIVAS_FALHAS[ip] >= MAX_TENTATIVAS:
             print(
                 f"[ALERTA DE SEGURANÇA] Possível ataque de Força Bruta detectado"
                 f" do IP: {ip}"
             )
             print(block_ip(ip))
-            return True
-    return False
+            TENTATIVAS_FALHAS[ip] = 0
 
 
 def block_ip(ip):
@@ -63,17 +71,14 @@ def menu(path_log):
 
         if opcao == "1":
             monitorar_log(path_log)
-            break
+
         elif opcao == "2":
             monitorar_log_tempo_real(path_log)
-            break
         elif opcao == "3":
             print("Saindo do programa...")
             break
 
 if __name__ == "__main__":  
-    tentativas_falhas = defaultdict(int)
-    MAX_TENTATIVAS = 3
 
     path_log = "auth_simulado.log"
     menu(path_log)
