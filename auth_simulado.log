@@ -1,0 +1,6 @@
+2026-10-17T10:00:01 auth[123]: Accepted password for root from 192.168.1.15
+2026-10-17T10:05:12 auth[124]: Failed password for invalid user admin from 203.0.113.50
+2026-10-17T10:05:15 auth[125]: Failed password for invalid user admin from 203.0.113.50
+2026-10-17T10:05:18 auth[126]: Failed password for invalid user admin from 203.0.113.50
+2026-10-17T10:05:21 auth[127]: Failed password for invalid user admin from 203.0.113.50
+2026-10-17T10:05:24 auth[128]: Failed password for invalid user admin from 203.0.113.50

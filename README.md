@@ -1,3 +1,1 @@
-# Onboarding LARCES
-
-## bashScript e Python para verificação de redes
+# Monitor de Logs de Autenticação com Alerta (Simulador de IDS básico)
