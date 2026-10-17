@@ -1,9 +1,8 @@
-from datetime import datetime, time, timedelta 
+import time
+from datetime import datetime, timedelta 
 from collections import defaultdict
 import re
 
-tentativas_falhas = defaultdict(int)
-MAX_TENTATIVAS = 3
 
 # regex para capturar o endereço IP de tentativas de login falhas
 padrao_log = re.compile(
@@ -49,7 +48,32 @@ def block_ip(ip):
     return f"IP {ip} bloqueado ebaaa"
 
 
+def menu(path_log):
+    opcoes_validas = {"1", "2", "3"}
+    while True:
+        print("\n=== MENU DE MONITORAMENTO ===")
+        print("1. Monitorar log de autenticação")
+        print("2. Monitorar log de autenticação em tempo real")
+        print("3. Sair")
+        opcao = input("Opção: ").strip()
 
-if __name__ == "__main__":
-    monitorar_log("auth_simulado.log")
-    # monitorar_log_tempo_real("auth_simulado.log")
+        if opcao not in opcoes_validas:
+            print("\n[Erro] Opção inválida. Tente novamente.")
+            continue
+
+        if opcao == "1":
+            monitorar_log(path_log)
+            break
+        elif opcao == "2":
+            monitorar_log_tempo_real(path_log)
+            break
+        elif opcao == "3":
+            print("Saindo do programa...")
+            break
+
+if __name__ == "__main__":  
+    tentativas_falhas = defaultdict(int)
+    MAX_TENTATIVAS = 3
+
+    path_log = "auth_simulado.log"
+    menu(path_log)
