@@ -2,6 +2,7 @@ import time
 from datetime import datetime, timedelta 
 from collections import defaultdict
 import re
+import subprocess
 
 TENTATIVAS_FALHAS = defaultdict(list)
 TIME_WINDOW = timedelta(minutes=5)
@@ -62,8 +63,16 @@ def match(line):
 
 
 def block_ip(ip):
-    return f"IP {ip} bloqueado ebaaa"
+    try:
+        # add o IP a lista de bloqueio (drop source)
+        drop = ["firewall-cmd", "--permanent", f"--add-source={ip}", "--set-context=drop"]
+        
+        subprocess.run(drop, check=True)
+        subprocess.run(["firewall-cmd", "--reload"], check=True)
 
+        return f"[SUCESSO] IP {ip} bloqueado via firewalld no Fedora."
+    except Exception as e:
+        return f"[ERRO] falha ao bloquear o IP {ip}: {e}"
 
 def menu(path_log):
     opcoes_validas = {"1", "2", "3"}
