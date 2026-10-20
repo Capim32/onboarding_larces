@@ -1,0 +1,7 @@
+services:
+  auth-monitor:
+    build: .
+    container_name: python-ids-monitor
+    restart: always
+    volumes:
+      - ./logs:/app/logs:Z
