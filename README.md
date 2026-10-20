@@ -20,9 +20,7 @@ Para visualizar a saída e os alertas do IDS, abra o acompanhamento dos logs:
 docker compose logs -f
 ```
 
-
-Parar a Aplicação
-
+### 4. Parar a Aplicação
 Para parar e remover o container:
 ```bash
 docker compose down
