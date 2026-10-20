@@ -16,8 +16,7 @@ def monitorar_log(path_log):
     try:
         with open (path_log, "r") as file:
             for line in file:
-                if match(line):
-                    break
+                match(line)
     except FileNotFoundError:
         print(f"[Erro] O arquivo {path_log} não foi encontrado.")
         exit(1)
@@ -33,10 +32,9 @@ def monitorar_log_tempo_real(path_log):
                 if not line:
                     time.sleep(0.5)
                     continue
-                if match(line):
-                    break
+                match(line)  
     except FileNotFoundError:
-        print(f"[Erro] O arquivo {path_log} não foi encontrado.")
+        print(f"[Erro] O arquivo {path_log} não foi encontrado.", flush=True)
         exit(1)
 
 def match(line):
@@ -56,9 +54,10 @@ def match(line):
         if tentativas >= MAX_TENTATIVAS:
             print(
                 f"\n[ALERTA DE SEGURANÇA] Possível ataque de Força Bruta detectado!"
-                f"\nIP: {ip} realizou {tentativas} ou mais tentativas em menos de {TIME_WINDOW.seconds // 60} minutos."
+                f"\nIP: {ip} realizou {tentativas} ou mais tentativas em menos de {TIME_WINDOW.seconds // 60} minutos.",
+                flush=True
             )
-            print(block_ip(ip))
+            print(block_ip(ip), flush=True)
             TENTATIVAS_FALHAS[ip].clear()
 
 
@@ -90,5 +89,5 @@ def menu(path_log):
 
 if __name__ == "__main__":  
 
-    path_log = "auth_simulado.log"
-    menu(path_log)
+    path_log = "logs/auth_simulado.log"
+    monitorar_log_tempo_real(path_log)
