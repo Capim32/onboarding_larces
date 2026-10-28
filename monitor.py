@@ -7,7 +7,7 @@ import subprocess
 TENTATIVAS_FALHAS = defaultdict(list)
 TIME_WINDOW = timedelta(minutes=5)
 MAX_TENTATIVAS = 5
-WHITELIST_IPS = {"127.0.0.1", "::1", "192.168.1.1"}
+WHITELIST_IPS = {"127.0.0.1", "::1", "192.168.1.1", "203.0.113.50"}
 
 # regex para capturar o endereço IP de tentativas de login falhas
 padrao_log = re.compile(
@@ -65,7 +65,9 @@ def match(line):
 
 def block_ip(ip):
     if ip in WHITELIST_IPS:
-        return f"[AVISO DE SEGURANÇA] O IP {ip} pertence à Whitelist e não será bloqueado."
+        print(f"[AVISO DE SEGURANÇA] O IP {ip} pertence à Whitelist e não será bloqueado.", flush=True)
+        return 
+        
     try:
         # teste usando iptables
         comando = ["iptables", "-A", "INPUT", "-s", ip, "-j", "DROP"]
