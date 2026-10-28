@@ -1,6 +1,6 @@
 # Python Security Monitor (IDS/IPS)
 
-Um sistema leve e containerizado de Detecção e Prevenção de Intrusão (IDS/IPS) desenvolvido em Python, projetado para rodar em ambientes Linux, monitorar arquivos de log de autenticação em tempo real e aplicar contramedidas ativas de bloqueio de rede via `iptables`.
+Um sistema leve e containerizado de Detecção e Prevenção de Intrusão (IDS/IPS) desenvolvido em `Python`, projetado para rodar em ambientes `Linux`, monitorar arquivos de log de autenticação em tempo real e aplicar contramedidas ativas de bloqueio de rede via `iptables`.
 
 ---
 
