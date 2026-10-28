@@ -5,7 +5,7 @@
 
 ### 1. Clonar ou Acessar a Pasta do Projeto
 ```bash
-cd /path/project
+cd /path/onboarding_larces
 ```
 
 ### 2. Subir o Container
