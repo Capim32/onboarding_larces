@@ -8,10 +8,13 @@ if [ ! -f /app/logs/auth_simulado.log ]; then
     touch /app/logs/auth_simulado.log
 fi
 
-# Gerador de logs em background para testes
+# Gerador de logs em background
 while true; do
+    # IP dentro e fora da whitelist
     echo "$(date -Iseconds) auth[124]: Failed password for invalid user admin from 203.0.113.50" >> /app/logs/auth_simulado.log
     sleep 3
+    echo "$(date -Iseconds) auth[124]: Failed password for invalid user admin from 127.0.0.1" >> /app/logs/auth_simulado.log
+    sleep 1
 done &
 
 echo "[*] Disparando o monitoramento de logs em tempo real..."
