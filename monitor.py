@@ -7,6 +7,7 @@ import subprocess
 TENTATIVAS_FALHAS = defaultdict(list)
 TIME_WINDOW = timedelta(minutes=5)
 MAX_TENTATIVAS = 5
+WHITELIST_IPS = {"127.0.0.1", "::1", "192.168.1.1"}
 
 # regex para capturar o endereço IP de tentativas de login falhas
 padrao_log = re.compile(
@@ -63,38 +64,18 @@ def match(line):
 
 
 def block_ip(ip):
+    if ip in WHITELIST_IPS:
+        return f"[AVISO DE SEGURANÇA] O IP {ip} pertence à Whitelist e não será bloqueado."
     try:
-        # add o IP a lista de bloqueio (drop source)
-        drop = ["firewall-cmd", "--permanent", f"--add-source={ip}", "--set-context=drop"]
-        
-        subprocess.run(drop, check=True)
-        subprocess.run(["firewall-cmd", "--reload"], check=True)
+        # teste usando iptables
+        comando = ["iptables", "-A", "INPUT", "-s", ip, "-j", "DROP"]
+        result = subprocess.run(comando, capture_output=True, text=True, check=True)
 
-        return f"[SUCESSO] IP {ip} bloqueado via firewalld no Fedora."
-    except Exception as e:
-        return f"[ERRO] falha ao bloquear o IP {ip}: {e}"
-
-def menu(path_log):
-    opcoes_validas = {"1", "2", "3"}
-    while True:
-        print("\n=== MENU DE MONITORAMENTO ===")
-        print("1. Monitorar log de autenticação")
-        print("2. Monitorar log de autenticação em tempo real")
-        print("3. Sair")
-        opcao = input("Opção: ").strip()
-
-        if opcao not in opcoes_validas:
-            print("\n[Erro] Opção inválida. Tente novamente.")
-            continue
-
-        if opcao == "1":
-            monitorar_log(path_log)
-
-        elif opcao == "2":
-            monitorar_log_tempo_real(path_log)
-        elif opcao == "3":
-            print("Saindo do programa...")
-            break
+        return f"[SUCESSO] IP {ip} bloqueado pelo iptables."
+    except subprocess.CalledProcessError as e:
+            return f"[ERRO] Falha ao bloquear o IP {ip}. Detalhes: {e.stderr.strip()}"
+    except FileNotFoundError:
+        return f"[ERRO] O comando iptables não foi encontrado." # precisa do iptables instalado no container :(
 
 if __name__ == "__main__":  
 
